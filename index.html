@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Desktop Planner</title>
+    <!--
+      Content-Security-Policy: 보안 정책
+      - script-src 'self': 같은 출처의 스크립트만 허용
+      - 외부 CDN이나 인라인 스크립트를 차단해 XSS 공격을 방지합니다.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    />
+  </head>
+  <body>
+    <!-- React가 마운트될 루트 DOM 노드 -->
+    <div id="root"></div>
+    <!-- Vite가 자동으로 번들된 JS를 여기에 삽입 -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

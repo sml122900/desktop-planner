@@ -1,0 +1,654 @@
+/**
+ * styles/global.css — 전역 스타일 & 테마 정의
+ *
+ * 구조:
+ * 1. CSS 변수 (테마별 색상 토큰)
+ * 2. 기본 리셋
+ * 3. 위젯 공통 스타일
+ * 4. 각 위젯별 스타일
+ * 5. 공통 컴포넌트 (버튼, 폼, 체크박스)
+ * 6. 애니메이션
+ */
+
+/* ════════════════════════════════════════════
+   1. 테마 CSS 변수
+   ════════════════════════════════════════════ */
+
+/* ── Dark Night (기본 테마) ── */
+.theme-dark-night {
+  --bg-desktop:      #0f1520;               /* 앱 전체 배경 */
+  --bg-widget:       rgba(255,255,255,0.07); /* 위젯 배경 (반투명) */
+  --border-widget:   rgba(255,255,255,0.12); /* 위젯 테두리 */
+  --text-primary:    rgba(255,255,255,0.88); /* 본문 텍스트 */
+  --text-secondary:  rgba(255,255,255,0.45); /* 보조 텍스트 */
+  --text-muted:      rgba(255,255,255,0.25); /* 흐린 텍스트 */
+  --accent-primary:  #8E82FF;               /* 보라색 강조 */
+  --accent-active:   rgba(83,74,183,0.35);  /* 현재 슬롯 배경 */
+  --slot-done-opacity: 0.4;                 /* 완료 슬롯 투명도 */
+  --topbar-bg:       rgba(255,255,255,0.05);
+  --topbar-border:   rgba(255,255,255,0.08);
+}
+
+/* ── Warm Paper (라이트 테마) ── */
+.theme-warm-paper {
+  --bg-desktop:      #f7f3ed;
+  --bg-widget:       #ffffff;
+  --border-widget:   rgba(0,0,0,0.1);
+  --text-primary:    #2c2a28;
+  --text-secondary:  #888680;
+  --text-muted:      #bbb9b5;
+  --accent-primary:  #d8844a;
+  --accent-active:   rgba(216,132,74,0.1);
+  --slot-done-opacity: 0.4;
+  --topbar-bg:       rgba(0,0,0,0.04);
+  --topbar-border:   rgba(0,0,0,0.06);
+}
+
+/* ── Frosted Glass (반투명 라이트) ── */
+.theme-frosted {
+  --bg-desktop:      transparent;
+  --bg-widget:       rgba(255,255,255,0.45);
+  --border-widget:   rgba(255,255,255,0.7);
+  --text-primary:    #1a1a3e;
+  --text-secondary:  rgba(26,26,62,0.55);
+  --text-muted:      rgba(26,26,62,0.3);
+  --accent-primary:  #534AB7;
+  --accent-active:   rgba(83,74,183,0.15);
+  --slot-done-opacity: 0.4;
+  --topbar-bg:       rgba(255,255,255,0.5);
+  --topbar-border:   rgba(255,255,255,0.65);
+}
+
+/* ════════════════════════════════════════════
+   2. 기본 리셋
+   ════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* 바탕화면 위 위젯이므로 body 배경은 투명 */
+  background: transparent;
+  font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  /* 텍스트 선택 방지 (위젯 UX) */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* ════════════════════════════════════════════
+   3. 앱 컨테이너 & 레이아웃
+   ════════════════════════════════════════════ */
+
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  padding: 16px;
+  overflow: hidden;
+  background: var(--bg-desktop);
+  border-radius: 16px;
+}
+
+/* ── 레이아웃 1: 수평 분할 ── */
+.layout-horizontal {
+  display: flex;
+  gap: 14px;
+  height: 100%;
+}
+.layout-main { flex: 1.3; }
+.layout-side  {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── 레이아웃 2: 상단바 + 3열 ── */
+.layout-top-3col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+.layout-topbar { flex-shrink: 0; }
+.layout-columns {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* ── 레이아웃 3: 사이드바 ── */
+.layout-sidebar {
+  display: flex;
+  gap: 12px;
+  height: 100%;
+}
+.sidebar-dock {
+  width: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+}
+.dock-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg-widget);
+  border: 0.5px solid var(--border-widget);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.dock-btn.active {
+  background: var(--accent-active);
+  border-color: var(--accent-primary);
+}
+.sidebar-main { flex: 1; }
+
+/* ════════════════════════════════════════════
+   4. 위젯 공통 스타일
+   ════════════════════════════════════════════ */
+
+.widget {
+  background: var(--bg-widget);
+  border: 0.5px solid var(--border-widget);
+  border-radius: 16px;
+  /* backdrop-filter: 뒤 배경을 흐리게 (유리 효과) */
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.widget-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* 아이콘 버튼 (헤더의 + 버튼) */
+.icon-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg-widget);
+  border: 0.5px solid var(--border-widget);
+  color: var(--text-secondary);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.icon-btn:hover {
+  background: var(--accent-active);
+  color: var(--accent-primary);
+}
+
+.loading {
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px 0;
+}
+.empty-state.small { padding: 6px 0; }
+
+/* ════════════════════════════════════════════
+   5-A. ScheduleWidget 스타일
+   ════════════════════════════════════════════ */
+
+.slots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  /* 스크롤바 숨기기 (위젯 느낌 유지) */
+  scrollbar-width: none;
+}
+.slots-container::-webkit-scrollbar { display: none; }
+
+/* 개별 시간 슬롯 */
+.time-slot {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  transition: background 0.15s;
+  position: relative;
+}
+
+/* 현재 진행 중인 슬롯 */
+.time-slot.active {
+  background: var(--accent-active);
+  border: 0.5px solid rgba(142,130,255,0.3);
+}
+
+/* 완료된 슬롯 */
+.time-slot.done {
+  opacity: var(--slot-done-opacity);
+}
+
+/* 알람 강조 애니메이션 (알람이 울렸을 때) */
+.time-slot.flash {
+  animation: slotFlash 0.7s ease 4;
+}
+
+.slot-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.slot-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 36px;
+  padding-top: 1px;
+  font-variant-numeric: tabular-nums; /* 숫자 폭 고정 (흔들림 방지) */
+}
+
+.slot-content { flex: 1; }
+
+.slot-title {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.slot-title.strikethrough {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.slot-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+/* 슬롯 호버 시 나타나는 컨트롤 */
+.slot-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.alarm-btn {
+  font-size: 13px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.alarm-btn:hover { opacity: 1; }
+.alarm-btn.off { opacity: 0.3; }
+
+.remove-btn {
+  font-size: 11px;
+  color: var(--text-muted);
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.remove-btn:hover {
+  background: rgba(226,75,74,0.15);
+  color: #E24B4A;
+}
+.remove-btn.small { font-size: 10px; width: 16px; height: 16px; }
+
+/* ════════════════════════════════════════════
+   5-B. GoalWidget 스타일
+   ════════════════════════════════════════════ */
+
+.goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.goal-item { display: flex; flex-direction: column; gap: 5px; }
+
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.goal-label {
+  font-size: 12px;
+  color: var(--text-primary);
+}
+.goal-label.complete { color: #1D9E75; }
+
+.goal-pct {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  /* 앱 시작 시 0에서 목표값까지 애니메이션 */
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 진행률 직접 편집 입력 */
+.progress-input {
+  width: 60px;
+  background: var(--bg-widget);
+  border: 0.5px solid var(--accent-primary);
+  border-radius: 4px;
+  color: var(--text-primary);
+  padding: 2px 4px;
+  font-size: 11px;
+  text-align: right;
+}
+
+/* 미니 캘린더 */
+.mini-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.day-cell {
+  aspect-ratio: 1;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.day-cell.day-label {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.day-cell.today {
+  background: var(--accent-primary);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 50%; /* 원형으로 */
+}
+
+/* ════════════════════════════════════════════
+   5-C. FocusWidget 스타일
+   ════════════════════════════════════════════ */
+
+.focus-now {
+  padding: 10px 12px;
+  background: rgba(29,158,117,0.12);
+  border: 0.5px solid rgba(29,158,117,0.25);
+  border-radius: 10px;
+}
+.focus-label {
+  font-size: 10px;
+  color: rgba(29,158,117,0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+.focus-task {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.focus-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Compact 모드 (TopBar 레이아웃용) */
+.focus-widget.compact {
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 24px;
+}
+.focus-widget.compact .focus-now {
+  padding: 0;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+.checklist-progress {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* 명언 박스 */
+.quote-box {
+  padding: 9px 11px;
+  border-left: 2px solid rgba(142,130,255,0.4);
+  border-radius: 0;
+}
+.quote-text {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* 체크리스트 */
+.checklist-section { display: flex; flex-direction: column; gap: 6px; }
+.checklist-header  { display: flex; justify-content: space-between; align-items: center; }
+.checklist-title   { font-size: 11px; color: var(--text-muted); }
+.checklist-count   { color: var(--text-muted); }
+.checklist-items   { display: flex; flex-direction: column; gap: 4px; }
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+/* 체크박스 버튼 */
+.check-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 0.5px solid var(--border-widget);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #1D9E75;
+  transition: background 0.15s, border-color 0.15s;
+}
+.check-box.checked {
+  background: rgba(29,158,117,0.25);
+  border-color: rgba(29,158,117,0.5);
+}
+
+.checklist-text {
+  font-size: 12px;
+  color: var(--text-primary);
+}
+.checklist-text.done {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* 체크리스트 입력 폼 */
+.add-checklist-form { margin-top: 4px; }
+.checklist-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 0.5px solid var(--border-widget);
+  color: var(--text-secondary);
+  padding: 4px 0;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.checklist-input::placeholder { color: var(--text-muted); }
+.checklist-input:focus { border-bottom-color: var(--accent-primary); }
+
+/* ════════════════════════════════════════════
+   6. 공통 폼 스타일
+   ════════════════════════════════════════════ */
+
+.add-event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  border: 0.5px solid var(--border-widget);
+}
+
+.add-event-form input,
+.add-event-form select {
+  background: var(--bg-widget);
+  border: 0.5px solid var(--border-widget);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 6px 8px;
+  font-size: 12px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.add-event-form input::placeholder { color: var(--text-muted); }
+.add-event-form input:focus,
+.add-event-form select:focus {
+  border-color: var(--accent-primary);
+}
+.add-event-form select option { background: #1a1f35; }
+
+.form-row {
+  display: flex;
+  gap: 6px;
+}
+.form-row input,
+.form-row select { flex: 1; }
+
+/* 체크박스 레이블 */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  cursor: pointer;
+}
+
+/* 폼 액션 버튼 */
+.form-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 1; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 0.5px solid var(--border-widget);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-ghost:hover { background: var(--bg-widget); }
+
+/* ════════════════════════════════════════════
+   7. 애니메이션
+   ════════════════════════════════════════════ */
+
+/* 알람 강조 깜빡임
+   0.7s × 4회 반복 = 총 2.8초 (useEffect에서 4000ms 후 제거) */
+@keyframes slotFlash {
+  0%   { background: transparent; }
+  30%  { background: rgba(142,130,255,0.4); border-color: rgba(142,130,255,0.6); }
+  70%  { background: rgba(142,130,255,0.2); }
+  100% { background: transparent; }
+}
+
+/* 위젯 마운트 시 페이드인 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.widget {
+  animation: fadeIn 0.3s ease forwards;
+}

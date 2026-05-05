@@ -1,0 +1,27 @@
+# .gitignore
+
+# 의존성 폴더 (npm install로 다시 생성 가능)
+node_modules/
+
+# 빌드 결과물
+dist/
+dist-electron/
+release/
+
+# 환경변수 (API 키 등 민감 정보)
+.env
+.env.local
+
+# OS 생성 파일
+.DS_Store        # macOS
+Thumbs.db        # Windows
+
+# 에디터 설정
+.vscode/
+.idea/
+
+# electron-builder 캐시
+.cache/
+
+# Claude Code
+CLAUDE.md
